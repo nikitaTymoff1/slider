@@ -4,10 +4,7 @@ import './index.css';
 import Slider from './components/slider';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(
-  <div>
-    <Slider/>
-  </div>, document.getElementById('root'));
+ReactDOM.render(<Slider/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

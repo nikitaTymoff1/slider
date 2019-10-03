@@ -2,36 +2,19 @@ import React from 'react';
 import Dots from "./dots";
 import Button from "./button";
 import styled from "styled-components";
-
 let images = [];
-const slide = false;
-
 for (let i = 0; i < 7; i++) {
     images[i] = require(`./../img/photo${i + 1}.jpeg`);
 }
-const Main = styled.div`
-    background-size: auto;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-`;
-const Container = styled.div`
-    margin-top: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`;
-
 const CompletedSlider = styled.div`
+    margin-top: 100px;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
 `;
-
 const ContainerSlider = styled.div`
     box-shadow: 4px 4px rgba(0, 0, 0, .2);
-    order: 2;
     border: 5px solid rgb(116, 154, 168);
     border-radius: 15px;
     width: 500px;
@@ -41,29 +24,25 @@ const SliderStyle = styled.div`
     display: flex;
     flex-direction: row;
 `;
-const PrevButton = styled.div`
-    order: 1
-`;
-const NextButton = styled.div`
-    order: 3
-`;
-
 class Slider extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            slideMode: true,
             currentIndex: 1,
-            pressedDot: 1,
             animTransition: '',
         };
+        this.prevSlide = this.prevSlide.bind(this);
+        this.animEndCheck = this.animEndCheck.bind(this);
+        this.nextSlide = this.nextSlide.bind(this);
+        this.dotChange = this.dotChange.bind(this);
     }
 
-    dotMove(event) {
+    dotChange(event) {
         let dotId = event.target.id;
         let numberFromId = dotId.replace(/dot/g, '');
         this.setState({
             currentIndex: parseInt(numberFromId),
-            pressedDot: parseInt(numberFromId),
             animTransition: `transform 0.4s ease-in-out`,
         });
     }
@@ -74,7 +53,6 @@ class Slider extends React.Component {
             newIndex = images.length;
             this.setState({
                 currentIndex: newIndex,
-                pressedDot: newIndex,
                 animTransition: 'none',
             });
         }
@@ -82,7 +60,6 @@ class Slider extends React.Component {
             newIndex = 1;
             this.setState({
                 currentIndex: newIndex,
-                pressedDot: newIndex,
                 animTransition: `none`,
             });
         }
@@ -94,7 +71,6 @@ class Slider extends React.Component {
         newIndex--;
         this.setState({
             currentIndex: newIndex,
-            pressedDot: newIndex,
             animTransition: `transform 0.4s ease-in-out`,
         });
     }
@@ -105,42 +81,39 @@ class Slider extends React.Component {
         newIndex++;
         this.setState({
             currentIndex: newIndex,
-            pressedDot: newIndex,
             animTransition: `transform 0.4s ease-in-out`,
         });
     }
 
     render() {
         return (
-            <Main>
-                <Container>
-                    <CompletedSlider>
-                        <ContainerSlider>
-                            <SliderStyle
-                                 onTransitionEnd={this.animEndCheck.bind(this)}
-                                 style={{
-                                     transition: this.state.animTransition,
-                                     transform: `translateX(${-500 * this.state.currentIndex}px)`
-                                 }}>
-                                <img src={images[6]} alt=""/>
-                                {images.map(item => <img key={item} src={item} alt={""}/>)}
-                                <img src={images[0]} alt=""/>
-                            </SliderStyle>
-                        </ContainerSlider>
-                        <PrevButton>
-                            <Button name="prev-button" func={this.prevSlide.bind(this)}> </Button>
-                        </PrevButton>
-                        <NextButton>
-                            <Button name="next-button" func={this.nextSlide.bind(this)}> </Button>
-                        </NextButton>
-                    </CompletedSlider>
-                </Container>
+            <div>
+                <CompletedSlider>
+                    <Button name="prev-button" func={this.prevSlide}> </Button>
+                    <ContainerSlider>
+                        <SliderStyle
+                            onTransitionEnd={this.animEndCheck}
+                            style={{
+                                transition: this.state.animTransition,
+                                transform: `translateX(${-500 * this.state.currentIndex}px)`
+                            }}>
+                            <img src={images[6]} alt=""/>
+                            {images.map(item => <img key={item} src={item} alt={""}/>)}
+                            <img src={images[0]} alt=""/>
+                        </SliderStyle>
+                    </ContainerSlider>
+                    <Button name="next-button" func={this.nextSlide}> </Button>
+                </CompletedSlider>
                 <Dots number={images.length}
-                      func={this.dotMove.bind(this)}
-                      ignore={this.state.pressedDot}
+                      func={this.dotChange}
+                      pressedDotNumber={this.state.currentIndex}
                 />
-            </Main>
+            </div>
         )
     }
 }
+
+
+
+
 export default Slider;
